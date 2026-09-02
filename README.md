@@ -1,16 +1,31 @@
-# React + Vite
+# CryptoPulse
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A cryptocurrency market tracker — top 20 coins by market cap, live prices, 7-day charts,
+a persistent watchlist, and a two-coin comparison view. Built for the ProStackHub
+Frontend Development Internship (Task 2). Data from the CoinGecko API.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Markets table** — sortable (rank, price, market cap, 24h, 7d) and searchable by name/ticker
+- **Coin detail view** — price, market cap, volume, ATH/ATL, and a 7-day Recharts line chart
+- **Watchlist** — star coins, persisted in `localStorage`
+- **Compare mode** — pick exactly two coins, overlay both 7-day trends on one chart
+- **Dark/light mode** — persisted across sessions
+- **Responsive**, with loading skeletons and error states (including graceful CoinGecko
+  rate-limit handling)
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React 19 · Vite · Tailwind CSS v4 · Recharts · CoinGecko API
 
-## Expanding the Oxlint configuration
+No router or data-fetching library — navigation and caching are hand-rolled and kept small.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Running locally
+
+```bash
+npm install
+npm run dev
+```
+
+Requires a free [CoinGecko Demo API key](https://www.coingecko.com/en/api). Add it to a
+`.env` file in the project root:
