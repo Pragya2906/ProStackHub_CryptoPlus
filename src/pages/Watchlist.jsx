@@ -1,12 +1,5 @@
 import { MarketTable } from "@/components/MarketTable";
-import {
-  Card,
-  EmptyState,
-  ErrorState,
-  SectionLabel,
-  TableSkeleton,
-  errorMessage,
-} from "@/components/States";
+import { Card, EmptyState, ErrorState, SectionLabel, TableSkeleton, } from "@/components/States";
 import { useTopCoins } from "@/hooks/useMarketData";
 import { matchesQuery, useSearch } from "@/hooks/useSearch";
 import { useWatchlist } from "@/hooks/useWatchlist";
@@ -39,8 +32,7 @@ export function Watchlist({ onSelectCoin, onNavigate }) {
               <button
                 type="button"
                 onClick={() => onNavigate("markets")}
-                className="rounded-md bg-foreground px-3 py-2 font-mono text-xs text-surface transition-opacity hover:opacity-90"
-              >
+                className="rounded-md bg-foreground px-3 py-2 font-mono text-xs text-surface transition-opacity hover:opacity-90">
                 Browse markets
               </button>
             }
@@ -54,24 +46,21 @@ export function Watchlist({ onSelectCoin, onNavigate }) {
         <Card>
           <ErrorState
             title="Could not refresh your watchlist"
-            message={errorMessage(error)}
-            onRetry={() => refetch()}
-          />
+            error={error}
+            onRetry={() => refetch()}/>
         </Card>
       ) : coins.length === 0 ? (
         <Card>
           <EmptyState
             title="Your starred coins left the top 20"
-            message="This view tracks the top 20 by market cap. Star an asset that is currently ranked to see it here."
-          />
+            message="This view tracks the top 20 by market cap. Star an asset that is currently ranked to see it here."/>
         </Card>
       ) : (
         <MarketTable
           coins={filtered}
           onSelectCoin={onSelectCoin}
           emptyTitle="No matching starred assets"
-          emptyMessage="None of your starred coins match that search."
-        />
+          emptyMessage="None of your starred coins match that search."/>
       )}
     </div>
   );

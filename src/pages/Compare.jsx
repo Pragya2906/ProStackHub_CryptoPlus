@@ -1,14 +1,7 @@
 import { useMemo } from "react";
 import { CoinAvatar } from "@/components/CoinAvatar";
 import { CompareChart } from "@/components/CompareChart";
-import {
-  BlockSkeleton,
-  Card,
-  EmptyState,
-  ErrorState,
-  SectionLabel,
-  errorMessage,
-} from "@/components/States";
+import { BlockSkeleton, Card, EmptyState, ErrorState, SectionLabel, } from "@/components/States";
 import { MAX_COMPARE, useCompare } from "@/hooks/useCompare";
 import { useMarketChart, useTopCoins } from "@/hooks/useMarketData";
 import { matchesQuery, useSearch } from "@/hooks/useSearch";
@@ -71,8 +64,7 @@ export function Compare({ onSelectCoin }) {
               {selected.map((coin, index) => (
                 <span
                   key={coin.id}
-                  className="inline-flex items-center gap-2 rounded-full border border-border px-2.5 py-1 text-sm"
-                >
+                  className="inline-flex items-center gap-2 rounded-full border border-border px-2.5 py-1 text-sm">
                   <span
                     className="size-2 rounded-full"
                     style={{ background: SERIES_COLORS[index] }}
@@ -83,8 +75,7 @@ export function Compare({ onSelectCoin }) {
                     type="button"
                     onClick={() => compare.remove(coin.id)}
                     aria-label={`Remove ${coin.name} from comparison`}
-                    className="text-muted transition-colors hover:text-foreground"
-                  >
+                    className="text-muted transition-colors hover:text-foreground">
                     ×
                   </button>
                 </span>
@@ -97,8 +88,7 @@ export function Compare({ onSelectCoin }) {
                 <button
                   type="button"
                   onClick={compare.clear}
-                  className="rounded-full border border-border px-2.5 py-1 text-sm text-muted transition-colors hover:text-foreground"
-                >
+                  className="rounded-full border border-border px-2.5 py-1 text-sm text-muted transition-colors hover:text-foreground">
                   Clear both
                 </button>
               )}
@@ -108,19 +98,17 @@ export function Compare({ onSelectCoin }) {
               {compare.ids.length < MAX_COMPARE ? (
                 <EmptyState
                   title="Pick two coins"
-                  message="Choose two assets from the list to draw both 7-day lines on the same chart."
-                />
+                  message="Choose two assets from the list to draw both 7-day lines on the same chart."/>
               ) : chartsPending ? (
                 <BlockSkeleton className="h-72" />
               ) : chartsError ? (
                 <ErrorState
                   title="Comparison data unavailable"
-                  message={errorMessage(firstChart.error ?? secondChart.error)}
+                  error={firstChart.error ?? secondChart.error}
                   onRetry={() => {
                     firstChart.refetch();
                     secondChart.refetch();
-                  }}
-                />
+                  }} />
               ) : rows.length > 1 ? (
                 <>
                   <CompareChart
@@ -129,8 +117,7 @@ export function Compare({ onSelectCoin }) {
                       key: coin.id,
                       name: `${coin.name} (${coin.symbol.toUpperCase()})`,
                       color: SERIES_COLORS[index] ?? "var(--color-muted)",
-                    }))}
-                  />
+                    }))}/>
                   <p className="mt-2 font-mono text-[11px] text-muted">
                     Lines show percent change from 7 days ago, so assets at very different prices
                     stay comparable.
@@ -139,8 +126,7 @@ export function Compare({ onSelectCoin }) {
               ) : (
                 <EmptyState
                   title="Not enough history"
-                  message="One of these assets does not have enough 7-day data to compare."
-                />
+                  message="One of these assets does not have enough 7-day data to compare."/>
               )}
             </div>
           </Card>
@@ -154,8 +140,7 @@ export function Compare({ onSelectCoin }) {
                     <button
                       type="button"
                       onClick={() => onSelectCoin(coin.id)}
-                      className="font-medium hover:text-primary"
-                    >
+                      className="font-medium hover:text-primary">
                       {coin.name}
                     </button>
                   </div>
@@ -167,16 +152,14 @@ export function Compare({ onSelectCoin }) {
                     <div className="flex justify-between">
                       <dt className="text-muted">24h</dt>
                       <dd
-                        className={`tabular-nums ${changeToneClass(coin.price_change_percentage_24h_in_currency)}`}
-                      >
+                        className={`tabular-nums ${changeToneClass(coin.price_change_percentage_24h_in_currency)}`}>
                         {formatPercent(coin.price_change_percentage_24h_in_currency)}
                       </dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted">7d</dt>
                       <dd
-                        className={`tabular-nums ${changeToneClass(coin.price_change_percentage_7d_in_currency)}`}
-                      >
+                        className={`tabular-nums ${changeToneClass(coin.price_change_percentage_7d_in_currency)}`}>
                         {formatPercent(coin.price_change_percentage_7d_in_currency)}
                       </dd>
                     </div>
@@ -201,14 +184,12 @@ export function Compare({ onSelectCoin }) {
           ) : markets.isError ? (
             <ErrorState
               title="Could not load the asset list"
-              message={errorMessage(markets.error)}
-              onRetry={() => markets.refetch()}
-            />
+              error={markets.error}
+              onRetry={() => markets.refetch()}/>
           ) : pickable.length === 0 ? (
             <EmptyState
               title="No matching assets"
-              message="Clear the search in the header to see the full top 20."
-            />
+              message="Clear the search in the header to see the full top 20."/>
           ) : (
             <ul className="max-h-[28rem] divide-y divide-border overflow-y-auto text-sm">
               {pickable.map((coin) => {
@@ -221,8 +202,7 @@ export function Compare({ onSelectCoin }) {
                       onClick={() => compare.toggle(coin.id)}
                       disabled={disabled}
                       aria-pressed={isSelected}
-                      className={`flex w-full items-center gap-2 px-4 py-2.5 text-left transition-colors ${isSelected ? "bg-primary/10" : "hover:bg-foreground/[0.03]"} disabled:cursor-not-allowed disabled:opacity-40`}
-                    >
+                      className={`flex w-full items-center gap-2 px-4 py-2.5 text-left transition-colors ${isSelected ? "bg-primary/10" : "hover:bg-foreground/[0.03]"} disabled:cursor-not-allowed disabled:opacity-40`}>
                       <CoinAvatar src={coin.image} name={coin.name} />
                       <span className="truncate font-medium">{coin.name}</span>
                       <span className="font-mono text-xs uppercase text-muted">{coin.symbol}</span>

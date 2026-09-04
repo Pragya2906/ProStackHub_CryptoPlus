@@ -2,7 +2,7 @@ import { CoinAvatar } from "@/components/CoinAvatar";
 import { PriceChart } from "@/components/PriceChart";
 import { MarketTable } from "@/components/MarketTable";
 import { StarButton } from "@/components/StarButton";
-import { BlockSkeleton, Card, EmptyState, ErrorState, SectionLabel, TableSkeleton, errorMessage} from "@/components/States";
+import { BlockSkeleton, Card, EmptyState, ErrorState, SectionLabel, TableSkeleton } from "@/components/States";
 import { useCompare } from "@/hooks/useCompare";
 import { useTopCoins } from "@/hooks/useMarketData";
 import { matchesQuery, useSearch } from "@/hooks/useSearch";
@@ -47,9 +47,8 @@ export function Markets({ onSelectCoin, onNavigate }) {
             <Card>
               <ErrorState
                 title="Market feed unavailable"
-                message={errorMessage(error)}
-                onRetry={() => refetch()}
-              />
+                error={error}
+                onRetry={() => refetch()} />
             </Card>
           ) : (
             <MarketTable coins={filtered} onSelectCoin={onSelectCoin} />
@@ -63,8 +62,7 @@ export function Markets({ onSelectCoin, onNavigate }) {
             {watchlist.ids.length === 0 ? (
               <EmptyState
                 title="Nothing starred yet"
-                message="Star any asset in the table to pin it here. Your picks are saved in this browser."
-              />
+                message="Star any asset in the table to pin it here. Your picks are saved in this browser." />
             ) : (
               <div className="divide-y divide-border text-sm">
                 {watched.map((coin) => (
@@ -72,8 +70,7 @@ export function Markets({ onSelectCoin, onNavigate }) {
                     <StarButton
                       active
                       label={coin.name}
-                      onToggle={() => watchlist.toggle(coin.id)}
-                    />
+                      onToggle={() => watchlist.toggle(coin.id)} />
                     <button
                       type="button"
                       onClick={() => onSelectCoin(coin.id)}
@@ -116,8 +113,7 @@ export function Markets({ onSelectCoin, onNavigate }) {
                   <StarButton
                     active={watchlist.isWatched(focus.id)}
                     label={focus.name}
-                    onToggle={() => watchlist.toggle(focus.id)}
-                  />
+                    onToggle={() => watchlist.toggle(focus.id)} />
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-border">
                   <Stat label="Price" value={formatPrice(focus.current_price)} />
@@ -125,13 +121,11 @@ export function Markets({ onSelectCoin, onNavigate }) {
                   <Stat
                     label="24h"
                     value={formatPercent(focus.price_change_percentage_24h_in_currency)}
-                    tone={changeToneClass(focus.price_change_percentage_24h_in_currency)}
-                  />
+                    tone={changeToneClass(focus.price_change_percentage_24h_in_currency)} />
                   <Stat
                     label="7d"
                     value={formatPercent(focus.price_change_percentage_7d_in_currency)}
-                    tone={changeToneClass(focus.price_change_percentage_7d_in_currency)}
-                  />
+                    tone={changeToneClass(focus.price_change_percentage_7d_in_currency)} />
                 </div>
               </>
             ) : (

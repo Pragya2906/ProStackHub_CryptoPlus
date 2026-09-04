@@ -9,10 +9,13 @@ export function isRateLimited(error) {
   return error instanceof ApiError && error.status === 429;
 }
 
-/**
- * Generic data hook: checks the cache, fetches if stale, retries once on 429.
- * `key` must be a stable string; `fetcher` is called with no args.
- */
+
+export function isRetryable(error) {
+  if (isRateLimited(error)) return true;
+  if (error instanceof ApiError && error.status === null) return true;
+  return false;
+}
+
 function useCachedFetch(key, fetcher, maxAgeMs) {
   const [state, setState] = useState(() => {
     const cached = getCached(key, maxAgeMs);
@@ -39,7 +42,7 @@ function useCachedFetch(key, fetcher, maxAgeMs) {
           setCached(key, data);
           setState({ data, isPending: false, isError: false, error: null });
         } catch (error) {
-          if (isRateLimited(error) && retryCountRef.current < 2) {
+          if (isRetryable(error) && retryCountRef.current < 2) {
             retryCountRef.current += 1;
             await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_RETRY_DELAY));
             await attempt();
@@ -54,7 +57,6 @@ function useCachedFetch(key, fetcher, maxAgeMs) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   return { ...state, refetch: () => load(true) };

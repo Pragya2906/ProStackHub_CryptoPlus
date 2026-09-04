@@ -1,5 +1,9 @@
+import { useEffect, useState } from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
-import { isRateLimited } from "@/hooks/useMarketData";
+import { isRateLimited, isRetryable } from "@/hooks/useMarketData";
+
+const RATE_LIMIT_COOLDOWN = 45;
+
 export function Card({ children, className = "" }) {
   return (
     <div className={`rounded-2xl border border-border bg-surface ${className}`}>{children}</div>
@@ -8,7 +12,6 @@ export function Card({ children, className = "" }) {
 export function SectionLabel({ children }) {
   return <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">{children}</p>;
 }
-
 export function TableSkeleton({ rows = 8 }) {
   return (
     <div className="divide-y divide-border" aria-hidden="true">
@@ -26,24 +29,50 @@ export function TableSkeleton({ rows = 8 }) {
 export function BlockSkeleton({ className = "h-40" }) {
   return <div className={`cp-shimmer rounded-lg ${className}`} aria-hidden="true" />;
 }
-export function ErrorState({ title = "Something went wrong", message, onRetry }) {
+
+export function ErrorState({ title = "Something went wrong", error, message, onRetry }) {
+  const waitingForRetry = isRetryable(error);
+  const [secondsLeft, setSecondsLeft] = useState(waitingForRetry ? RATE_LIMIT_COOLDOWN : 0);
+
+  useEffect(() => {
+    setSecondsLeft(waitingForRetry ? RATE_LIMIT_COOLDOWN : 0);
+  }, [error, waitingForRetry]);
+
+  useEffect(() => {
+    if (!waitingForRetry || secondsLeft <= 0) return;
+    const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [waitingForRetry, secondsLeft]);
+
+  useEffect(() => {
+    if (waitingForRetry && secondsLeft === 0 && onRetry) onRetry();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secondsLeft]);
+
+  const waiting = waitingForRetry && secondsLeft > 0;
+  const displayMessage = waiting
+    ? `CoinGecko is temporarily rate limiting requests. Retrying automatically in ${secondsLeft}s…`
+    : (message ?? errorMessage(error));
+
   return (
     <div role="alert" className="px-4 py-8 text-center">
       <AlertTriangle className="mx-auto size-5 text-loss" aria-hidden="true" />
       <p className="mt-3 font-display text-xl font-semibold italic">{title}</p>
-      <p className="mx-auto mt-2 max-w-sm text-sm text-muted">{message}</p>
+      <p className="mx-auto mt-2 max-w-sm text-sm text-muted">{displayMessage}</p>
       {onRetry ? (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 inline-flex items-center gap-2 rounded-md bg-foreground px-3 py-2 font-mono text-xs text-surface transition-opacity hover:opacity-90">
+          disabled={waiting}
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-foreground px-3 py-2 font-mono text-xs text-surface transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">
           <RefreshCw className="size-3.5" aria-hidden="true" />
-          Retry request
+          {waiting ? `Wait ${secondsLeft}s` : "Retry request"}
         </button>
       ) : null}
     </div>
   );
 }
+
 export function EmptyState({ title, message, action }) {
   return (
     <div className="px-4 py-10 text-center">

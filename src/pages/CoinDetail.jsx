@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { CoinAvatar } from "@/components/CoinAvatar";
 import { PriceChart } from "@/components/PriceChart";
 import { StarButton } from "@/components/StarButton";
-import { BlockSkeleton, Card, ErrorState, SectionLabel, errorMessage } from "@/components/States";
+import { BlockSkeleton, Card, ErrorState, SectionLabel } from "@/components/States";
 import { MAX_COMPARE, useCompare } from "@/hooks/useCompare";
 import { useCoinDetail, useMarketChart } from "@/hooks/useMarketData";
 import { useWatchlist } from "@/hooks/useWatchlist";
@@ -35,7 +35,7 @@ export function CoinDetail({ coinId, onBack }) {
                 <Card className="mt-4">
                     <ErrorState
                         title="Could not load this asset"
-                        message={errorMessage(detail.error)}
+                        error={detail.error}
                         onRetry={() => detail.refetch()}
                     />
                 </Card>
@@ -70,8 +70,7 @@ export function CoinDetail({ coinId, onBack }) {
                             <StarButton
                                 active={watchlist.isWatched(coinId)}
                                 label={coin.name}
-                                onToggle={() => watchlist.toggle(coinId)}
-                            />
+                                onToggle={() => watchlist.toggle(coinId)}/>
                         </div>
                     </section>
 
@@ -94,9 +93,8 @@ export function CoinDetail({ coinId, onBack }) {
                                 ) : chart.isError ? (
                                     <ErrorState
                                         title="Chart unavailable"
-                                        message={errorMessage(chart.error)}
-                                        onRetry={() => chart.refetch()}
-                                    />
+                                        error={chart.error}
+                                        onRetry={() => chart.refetch()}/>
                                 ) : (
                                     <PriceChart data={chart.data} label={coin.name} />
                                 )}
@@ -133,7 +131,13 @@ export function CoinDetail({ coinId, onBack }) {
                                     {coin.genesisDate ? `Genesis ${coin.genesisDate}` : null}
                                     {coin.genesisDate && coin.homepage ? " · " : null}
                                     {coin.homepage ? (
-                                        <a href={coin.homepage} target="_blank" rel="noreferrer noopener" className="underline underline-offset-2 hover:text-foreground"> Official site </a>
+                                        <a
+                                            href={coin.homepage}
+                                            target="_blank"
+                                            rel="noreferrer noopener"
+                                            className="underline underline-offset-2 hover:text-foreground">
+                                            Official site
+                                        </a>
                                     ) : null}
                                 </p>
                             ) : null}
